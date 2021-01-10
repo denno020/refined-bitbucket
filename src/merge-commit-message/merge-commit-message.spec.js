@@ -7,44 +7,41 @@ import '../../test/setup-jsdom'
 import mergeCommitMessage from '.'
 
 const mockFetchWithSuccessfulResponse = () => {
-    global.fetch = url => {
-        if (url.includes('MERGE_COMMIT_TEMPLATE')) {
-            return Promise.resolve({
-                ok: true,
-                text: () =>
-                    Promise.resolve(
-                        '{title} (#{id})\n\n' +
-                            '{sourceBranch} => {targetBranch}\n\n' +
-                            '{description}\n\n' +
-                            '{approvedByList}'
-                    ),
-            })
-        }
-        if (
-            url ===
-            'https://api.bitbucket.org/2.0/repositories/user/repo/pullrequests/1'
-        ) {
-            return Promise.resolve({
-                json: () =>
-                    Promise.resolve({
-                        id: 1,
-                        title: 'Title',
-                        description: 'Description',
-                        source: { branch: { name: 'source-branch' } },
-                        destination: { branch: { name: 'destination-branch' } },
-                        participants: [
-                            {
-                                approved: true,
-                                user: {
-                                    // eslint-disable-next-line camelcase
-                                    display_name: 'Ronald Rey',
-                                    username: 'reyronald',
-                                },
+    global.fetch = () => {
+        return Promise.resolve({
+            ok: true,
+            text: () =>
+                Promise.resolve(
+                    '{title} (#{id})\n\n' +
+                        '{sourceBranch} => {targetBranch}\n\n' +
+                        '{description}\n\n' +
+                        '{approvedByList}'
+                ),
+        })
+    }
+
+    global.chrome = {
+        runtime: {
+            sendMessage: (data, cb) => {
+                cb({
+                    id: 1,
+                    title: 'Title',
+                    description: 'Description',
+                    source: { branch: { name: 'source-branch' } },
+                    destination: { branch: { name: 'destination-branch' } },
+                    participants: [
+                        {
+                            approved: true,
+                            user: {
+                                // eslint-disable-next-line camelcase
+                                display_name: 'Ronald Rey',
+                                nickname: 'reyronald',
                             },
-                        ],
-                    }),
-            })
-        }
+                        },
+                    ],
+                })
+            },
+        },
     }
 }
 
@@ -59,7 +56,7 @@ test('happy path functionality', async t => {
             uuid: '12345678-4347-405e-96a4-600fd01e5f90',
             language: 'javascript',
             owner: {
-                username: 'user',
+                nickname: 'user',
                 uuid: '12345678-929f-4bf1-b5e3-764d1bc80101',
                 isTeam: true,
             },

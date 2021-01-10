@@ -10,10 +10,12 @@ module.exports = {
         main: './src/main',
         options: './src/options',
         background: './src/background',
+        'background-for-requests': './src/background-for-requests',
+        'background-for-webnavigation': './src/background-for-webnavigation',
     },
     plugins: [
         new webpack.DefinePlugin({
-            process: {},
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         }),
         new webpack.optimize.ModuleConcatenationPlugin(),
         new CopyWebpackPlugin([

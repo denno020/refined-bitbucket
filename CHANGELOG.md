@@ -1,9 +1,189 @@
-# Next Version
+# 3.24.0 (2020-12-21)
+
+### Features
+
+-   ft(new-ui): Adds 'Compact' FileTree mode (#388).
+    ([a6803ec](https://github.com/refined-bitbucket/refined-bitbucket/commit/a6803ec04f10dc88c1e5c102c07c530570d16676))
+    Thanks [@RobertChrist](https://github.com/RobertChrist)
+
+### Improvements
+
+-   Improve performance of syntax highlighting (#352).
+    ([9ea8d1b](https://github.com/refined-bitbucket/refined-bitbucket/commit/9ea8d1bb8ea4059c71444cb91976fec8632bad97))
+    Thanks [@jwallet](https://github.com/jwallet)!
+-   Remove jQuery from syntax highlighting (#394).
+    ([facb6c1](https://github.com/refined-bitbucket/refined-bitbucket/commit/facb6c1d99ef89b60d222bae00b5de2d4a79295f))
+
+### Bug fixes
+
+-   fix: merge commit message when user can't merge (#396).
+    ([fe1e03f](https://github.com/refined-bitbucket/refined-bitbucket/commit/fe1e03fe56151adce9f3d960f72b033e32bfbf6a))
+
+### Chore
+
+-   fix: logger (#395).
+    ([46caafa](https://github.com/refined-bitbucket/refined-bitbucket/commit/46caafab286016934d45cca8f391980225892fa9))
+-   update PULL_REQUEST_TEMPLATE.
+    ([13fbeac](https://github.com/refined-bitbucket/refined-bitbucket/commit/13fbeace710bf32a10ee851038e14abc8c402d2e))
+-   chore: remove copy filename ft in new ui (#397).
+    ([b84d975](https://github.com/refined-bitbucket/refined-bitbucket/commit/b84d9754c3fa3f3bc41932a3684950e290f5d797))
+-   chore(deps): bump ini from 1.3.5 to 1.3.7 (#398).
+    ([9092ac3](https://github.com/refined-bitbucket/refined-bitbucket/commit/9092ac35bf93345db55a5a78076a0ccc35df0eba))
+
+# 3.23.0 (2020-11-16)
+
+### Features
+
+-   feat: Collapse pull request side menus on load (#342) ([aa5af1f](https://github.com/refined-bitbucket/refined-bitbucket/commit/aa5af1f48121478281a4b84be0193c1aa548792e)).
+    Thanks [@jwallet](https://github.com/jwallet)!
+
+### Bug fixes
+
+-   fix(new-ui): merge commit template (#390) ([4df6072](https://github.com/refined-bitbucket/refined-bitbucket/commit/4df6072c6b9902db928cee96d0441591cf89c785)).  
+    Fix merge commit template when PRs is loaded with whitespaces off.
+-   fix: Augment PR entry (#362) ([3f829b1](https://github.com/refined-bitbucket/refined-bitbucket/commit/3f829b159720f48d1edbb9e6fc9192ee448737d8)).
+    Thanks [@jwallet](https://github.com/jwallet)!
+
+### Improvements
+
+-   enh: re-insert badges when side menu expands (#350) ([5123119](https://github.com/refined-bitbucket/refined-bitbucket/commit/512311999b88d0dc87f248b76bc9247ef6f338db)).
+    Thanks [@jwallet](https://github.com/jwallet)!
+
+### Chore
+
+-   chore(deps): bump bl from 1.2.2 to 1.2.3 (#392) ([5e8ee50](https://github.com/refined-bitbucket/refined-bitbucket/commit/5e8ee500250347c1b5c1fd81f67e45f1890fa51a))
+-   chore(deps): bump dot-prop from 4.2.0 to 4.2.1 (#391) ([ee88f95](https://github.com/refined-bitbucket/refined-bitbucket/commit/ee88f95bd0795d448e682e36db0179c159c4d9ce))
+-   chore(deps): bump elliptic from 6.4.1 to 6.5.3 (#375) ([04f8e65](https://github.com/refined-bitbucket/refined-bitbucket/commit/04f8e6593111e66f9465e91119815e6e87b06229))
+
+# 3.22.3 (2020-09-29)
+
+### Bug fixes
+
+-   fix(old-ui): duplicated elements in pull request view (#382)
+-   fix(old-ui): ignore whitespace feature (#383)
+
+# 3.22.0 (2020-09-27)
+
+### Improvements
+
+-   enh: Collapse diff scrolling effect only on bottom toggle (#357). Thanks [@jwallet](https://github.com/jwallet)!
+
+### Bug fixes
+
+-   fix: Autolinker plugin (#355). Thanks [@jwallet](https://github.com/jwallet)!
+-   fix: Load diff was pending on failed load diff (#365). Thanks [@jwallet](https://github.com/jwallet)!
+-   fix(new-ui): Merge commit template in pull requests should now work when navigating from other routes (#378).
+
+# 3.21.0 (2020-06-07)
+
+### Features
+
+-   feat: Trigger ignore whitespace on PR load ([#340](https://github.com/refined-bitbucket/refined-bitbucket/pull/340)) ([a588ad3](https://github.com/refined-bitbucket/refined-bitbucket/commit/a588ad3599638eda295811fd1b08adcf00722cff)). Thanks [@jwallet](https://github.com/jwallet)!
+-   feat: Add PR list features to Overview page ([#338](https://github.com/refined-bitbucket/refined-bitbucket/pull/338)) ([2958224](https://github.com/refined-bitbucket/refined-bitbucket/commit/2958224988e618bada885a46575dc36120895753)). Thanks [@jwallet](https://github.com/jwallet)!
+
+### Improvements
+
+-   enh: plus/minus on Firefox + line limit ruler ([#341](https://github.com/refined-bitbucket/refined-bitbucket/pull/341)) ([09cba87](https://github.com/refined-bitbucket/refined-bitbucket/commit/09cba8747bfc4485fa407c6a521af7b59b9058ed)). Thanks [@jwallet](https://github.com/jwallet)!
+-   enh: add user-select none to filename badge ([#346](https://github.com/refined-bitbucket/refined-bitbucket/pull/346)) ([456730e](https://github.com/refined-bitbucket/refined-bitbucket/commit/456730e28290d5ddefd4a58437ac2d4bd903495a)). Thanks [@jwallet](https://github.com/jwallet)!
+-   enh: UI update of collapse description ([#343](https://github.com/refined-bitbucket/refined-bitbucket/pull/343)) ([46f697a](https://github.com/refined-bitbucket/refined-bitbucket/commit/46f697abdbe5032565b279d60cccc142efac89c0)). Thanks [@jwallet](https://github.com/jwallet)!
+-   enh: Show comments ([#345](https://github.com/refined-bitbucket/refined-bitbucket/pull/345)) ([0ee2a99](https://github.com/refined-bitbucket/refined-bitbucket/commit/0ee2a99a87e8fc82dba8633b7ee2b2a6fc257936)). Thanks [@jwallet](https://github.com/jwallet)!
+
+### Bug fixes
+
+-   fix: increase merge commit timeout ([#367](https://github.com/refined-bitbucket/refined-bitbucket/pull/367)) ([67ac887](https://github.com/refined-bitbucket/refined-bitbucket/commit/67ac88774672324e46e3e8400462d3e82e7c59c3)).
+-   fix: merge commit template ([#368](https://github.com/refined-bitbucket/refined-bitbucket/pull/368)) ([31a60a8](https://github.com/refined-bitbucket/refined-bitbucket/commit/31a60a8ec79a599eafc49c227e01883cd6cccb69)).
+-   fix: collapse description, small fixes ([#364](https://github.com/refined-bitbucket/refined-bitbucket/pull/364)) ([f7c3e80](https://github.com/refined-bitbucket/refined-bitbucket/commit/f7c3e801b20ba9f21c790706ae1a8a319b4ba5eb)). Thanks [@jwallet](https://github.com/jwallet)!
+
+### Chore
+
+-   chore(deps): bump acorn from 5.7.2 to 5.7.4 ([#337](https://github.com/refined-bitbucket/refined-bitbucket/pull/337)) ([39e4ddc](https://github.com/refined-bitbucket/refined-bitbucket/commit/39e4ddcf121500b1f5bff31e7cdbc4706f1c11df)).
+-   chore(deps): bump jquery from 3.4.0 to 3.5.0 ([#353](https://github.com/refined-bitbucket/refined-bitbucket/pull/353)) ([8a05731](https://github.com/refined-bitbucket/refined-bitbucket/commit/8a05731726d6a977e44dfa01973a392c39e07aaf)).
+
+# 3.20.0 (2020-03-01)
+
+### Features
+
+-   **New PR UI**. Insert "Copy filename to clipboard" button in diff header,
+    [pull request #332](https://github.com/refined-bitbucket/refined-bitbucket/pull/332).
 
 ### Bug Fixes
 
-*   Fixed an issue where deleted lines sometimes had a white background when using custom themes.
-    closes [issue#283](https://github.com/refined-bitbucket/refined-bitbucket/issues/283).
+-   Hide line-limit indicator in comments,
+    [pull request #327](https://github.com/refined-bitbucket/refined-bitbucket/pull/327).
+    Thanks [@BenWildeman](https://github.com/BenWildeman)!
+
+# 3.19.0 (2020-01-27)
+
+### Features
+
+-   Add a line length limit option that shows a ruler at the user-defined column,
+    [pull request #309](https://github.com/refined-bitbucket/refined-bitbucket/pull/309).
+    Thanks [@avshalomt](https://github.com/avshalomt)!
+-   **Merge Commit Message Template**. This feature now works in the new pull request experience.
+    [pull request #325](https://github.com/refined-bitbucket/refined-bitbucket/pull/325),
+    related [issue #252](https://github.com/refined-bitbucket/refined-bitbucket/issues/252),
+    closes [issue #323](https://github.com/refined-bitbucket/refined-bitbucket/issues/323).
+
+# 3.18.2 (2019-12-26)
+
+### Language support
+
+-   Svelte language support for `.svelte` files and Puppet language support for `.pp` files,
+    [pull request #305](https://github.com/refined-bitbucket/refined-bitbucket/pull/305).
+    Thanks [@Vages](https://github.com/Vages)!
+
+### Bug Fixes
+
+-   Fix "Unable to scroll to next/previous comment",
+    [pull request #312](https://github.com/refined-bitbucket/refined-bitbucket/pull/312),
+    closes [issue #296](https://github.com/refined-bitbucket/refined-bitbucket/issues/296).
+    Thanks [@nikolay-borzov](https://github.com/nikolay-borzov)!
+-   Fix Cross-Origin Requests blocking,
+    [pull request #322](https://github.com/refined-bitbucket/refined-bitbucket/pull/322),
+    closes [issue #308](https://github.com/refined-bitbucket/refined-bitbucket/issues/308),
+    closes [issue #321](https://github.com/refined-bitbucket/refined-bitbucket/issues/321),
+
+# 3.18.1 (2019-08-03)
+
+### Bug Fixes
+
+-   Fix sidebar counter badges positioning in collapsed mode when the number of branches or pull requests is too large,
+    closes [issue #301](https://github.com/refined-bitbucket/refined-bitbucket/issues/301),
+    [pull request #302](https://github.com/refined-bitbucket/refined-bitbucket/pull/302).
+
+# 3.18.0 (2019-06-08)
+
+### Feature
+
+-   **Sticky Header**: The filename header for each file in a pull request will now remain visible for as long
+    as the file is visible. This ensures that the filename can always be seen while content of that file is also
+    visible, [pull request #287](https://github.com/refined-bitbucket/refined-bitbucket/pull/287). Thanks [@denno020](https://github.com/denno020)
+
+### Bug Fixes
+
+-   Fix "Ignore Whitespace" feature that broke after Atlassian migrated their pull request list page
+    to a CSS-in-JS solution that autogenerates the CSS class names of the elements, making the
+    previous selectors the extension relied on useless,
+    closes [issue #285](https://github.com/refined-bitbucket/refined-bitbucket/issues/285),
+    [pull request #292](https://github.com/refined-bitbucket/refined-bitbucket/pull/292).
+
+### Cleanup
+
+-   Remove Augment PR Entry features that have been natively implemented by Bitbucket,
+    [pull request #293](https://github.com/refined-bitbucket/refined-bitbucket/pull/293).
+
+# 3.17.0 (2019-06-03)
+
+### Improvements
+
+-   Add "None" option for the Default Merge Strategy feature, in case you don't want to use it,
+    closes [issue #288](https://github.com/refined-bitbucket/refined-bitbucket/issues/288),
+    [pull request #289](https://github.com/refined-bitbucket/refined-bitbucket/pull/289).
+
+### Bug Fixes
+
+-   Fixed an issue where deleted lines sometimes had a white background when using custom themes.
+    closes [issue #283](https://github.com/refined-bitbucket/refined-bitbucket/issues/283).
 
 # 3.16.0 (2019-04-21)
 

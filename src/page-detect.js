@@ -11,7 +11,7 @@ const getCleanPathname = () => location.pathname.replace(/^[/]|[/]$/g, '')
 // eslint-disable-next-line no-warning-comments
 // FIXME TODO: I noticed much later that maybe this could simply be:
 // `JSON.parse(document.body.dataset.currentRepo).fullslug`
-// Confirm, compare perf and replace in better.
+// Confirm, compare perf and replace if better.
 export const getRepoURL = onetime(() =>
     location.pathname
         .slice(1)
@@ -32,6 +32,12 @@ export const isPullRequestList = () => getRepoPath() === 'pull-requests'
 
 export const isPullRequest = () => /^pull-requests\/\d+/.test(getRepoPath())
 
+export const getPullRequestId = () => {
+    const repoPath = getRepoPath()
+    const matches = repoPath.match(/pull-requests\/(\d*)/)
+    return matches ? matches[1] || null : null
+}
+
 export const isComparePage = () => /^branches\/compare/.exec(getRepoPath())
 
 export const isCreatePullRequestURL = () =>
@@ -43,3 +49,6 @@ export const isEditPullRequestURL = () =>
 export const isCommit = () => getRepoPath().startsWith('commits/')
 
 export const isBranch = () => getRepoPath().startsWith('branch/')
+
+export const isDashBoardOverview = () =>
+    getRepoURL().startsWith('dashboard/overview')

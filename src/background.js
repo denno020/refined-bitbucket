@@ -15,12 +15,15 @@ const justInstalledOrUpdated = new Promise((resolve, reject) => {
 new OptionsSync().define({
     defaults: {
         syntaxHighlight: true,
+        compactFileTree: false,
         autolinker: true,
         highlightOcurrences: true,
         ignoreWhitespace: true,
         copyFilename: true,
         keymap: true,
         collapsePullRequestDescription: true,
+        collapsePullRequestSideMenus: true,
+        collapsePrSideMenusResolutionSize: 1360,
         collapseDiff: true,
         loadAllDiffs: true,
         closeAnchorBranch: true,
@@ -34,7 +37,7 @@ new OptionsSync().define({
         mergeCommitMessageUrl: null,
         pullrequestCommitAmount: true,
         showCommentsCheckbox: true,
-        defaultMergeStrategy: 'merge_commit',
+        defaultMergeStrategy: 'none',
         autocollapsePaths: [
             'package-lock.json',
             'yarn.lock',
@@ -44,8 +47,11 @@ new OptionsSync().define({
         ignorePaths: [''].join('\n'),
         customTabSizeEnabled: true,
         customTabSize: 4,
+        lineLengthLimitEnabled: true,
+        lineLengthLimit: 80,
         customStyles: '',
         enableUpdateNotifications: true,
+        stickyHeader: true,
     },
     migrations: [
         async savedOptions => {

@@ -2,62 +2,20 @@
 // @jsx h
 
 import { h } from 'dom-chef'
-import { ago } from 'time-ago'
-import { getRepoURL } from '../page-detect'
-import api, { type PullRequest, type PullRequestActivity } from '../api'
+import api, { type PullRequestActivity } from '../api'
 
-import './augment-pr-entry.css'
-import linkifyTargetBranch from '../linkify-target-branch/linkify-target-branch'
+declare var $: any
 
-const buildSourceBranchNode = (branchName: string): HTMLElement => {
-    const repoUrl = getRepoURL()
-    return (
-        <span class="__rbb-pull-request-source-branch">
-            <span class="ref-label">
-                <span class="ref branch">
-                    <span class="name" aria-label={`branch ${branchName}`}>
-                        <a
-                            style={{ color: '#707070' }}
-                            title={branchName}
-                            href={`https://bitbucket.org/${repoUrl}/branch/${branchName}`}
-                        >
-                            {branchName}
-                        </a>
-                    </span>
-                </span>
-            </span>
-        </span>
-    )
-}
-
-export const addSourceBranch = (prNode: HTMLElement, prData: PullRequest) => {
-    const sourceBranchNode = buildSourceBranchNode(prData.source.branch.name)
-    const arrow = prNode.querySelector('span.aui-iconfont-devtools-arrow-right')
-    if (arrow && arrow.parentElement) {
-        arrow.parentElement.insertBefore(sourceBranchNode, arrow)
-    }
-}
-
-export const addCreationDate = (prNode: HTMLElement, prData: PullRequest) => {
-    const date = new Date(prData.created_on)
-    const dateString = date.toDateString()
-    const creationDateNode = (
-        <div title={dateString} datetime={prData.created_on}>
-            Created on {dateString} ({ago(date)})
-        </div>
-    )
-
-    const prNumberAndTimestamp = prNode.querySelector(
-        '.pr-number-and-timestamp'
-    )
-    if (prNumberAndTimestamp) {
-        prNumberAndTimestamp.append(<br />)
-        prNumberAndTimestamp.appendChild(creationDateNode)
-    }
+export function addSourceBranch(prRow: HTMLElement) {
+    if (window.innerWidth <= 1200)
+        $(prRow)
+            .find('td :hidden')
+            .has('div[role="button"]:hidden')
+            .show()
 }
 
 export const addUsernameWithLatestUpdate = (
-    prNode: HTMLElement,
+    prRow: HTMLElement,
     prActivity: PullRequestActivity
 ) => {
     // Pull requests by default have the initial commit info as an activity
@@ -79,30 +37,30 @@ export const addUsernameWithLatestUpdate = (
         activityType = 'Commented'
     }
 
-    const prUpdateTime = ((prNode.querySelector(
-        '.pr-number-and-timestamp'
-    ): any): HTMLElement).firstElementChild
+    const prSubline = ((prRow.querySelector('td small'): any): HTMLElement)
 
-    if (author && prUpdateTime) {
-        prUpdateTime.append(` by ${author} (${activityType})`)
+    if (author && prSubline) {
+        prSubline.append(` by ${author} (${activityType})`)
     }
 }
 
-export default function augmentPrEntry(prNode: HTMLElement) {
-    linkifyTargetBranch(prNode)
+export default function augmentPrEntry(prRow: HTMLElement) {
+    addSourceBranch(prRow)
 
-    const prId = prNode.dataset.pullRequestId
+    const link: HTMLAnchorElement = (prRow.querySelector(
+        'a[data-qa="pull-request-row-link"]'
+    ): any)
+    const url = new URL(link.href)
+    const splitPath = url.pathname.split('/')
+    const prId = splitPath[splitPath.length - 1]
 
-    api.getPullrequest(prId).then(prData => {
-        if (prData) {
-            addSourceBranch(prNode, prData)
-            addCreationDate(prNode, prData)
-        }
-    })
+    if (!prId) {
+        return
+    }
 
     api.getPullrequestActivity(prId).then(prActivity => {
         if (prActivity) {
-            addUsernameWithLatestUpdate(prNode, prActivity)
+            addUsernameWithLatestUpdate(prRow, prActivity)
         }
     })
 }

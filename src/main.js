@@ -2,6 +2,7 @@
 
 /* eslint-disable import/first */
 /* eslint-disable no-multi-assign */
+/* eslint-disable no-undef */
 global.jQuery = global.$ = require('jquery')
 
 import OptionsSync from 'webext-options-sync'
@@ -14,10 +15,12 @@ import collapseDiff from './collapse-diff'
 import defaultMergeStrategy from './default-merge-strategy'
 import diffIgnore from './diff-ignore'
 import removeDiffsPlusesAndMinuses from './diff-pluses-and-minuses'
-import ignoreWhitespace from './ignore-whitespace'
+import {
+    ignoreWhitespaceSearchParam,
+    ignoreWhitespaceInit,
+} from './ignore-whitespace'
 import insertCopyFilename from './insert-copy-filename'
 import keymap from './keymap'
-import linkifyTargetBranch from './linkify-target-branch'
 import loadAllDiffs from './load-all-diffs'
 import occurrencesHighlighter from './occurrences-highlighter'
 import pullrequestCommitAmount from './pullrequest-commit-amount'
@@ -28,7 +31,12 @@ import syntaxHighlight from './syntax-highlight'
 import comparePagePullRequest from './compare-page-pull-request'
 import setTabSize from './tab-size'
 import mergeCommitMessage from './merge-commit-message'
+import mergeCommitMessageNew from './merge-commit-message-new'
 import collapsePullRequestDescription from './collapse-pull-request-description'
+import setStickyHeader from './sticky-header'
+import setLineLengthLimit from './limit-line-length'
+import setCompactPRFileTree from './compact-pull-request-file-tree'
+import collapsePullRequestSideMenus from './collapse-pull-request-side-menus'
 
 import observeForWordDiffs from './observe-for-word-diffs'
 
@@ -39,9 +47,16 @@ import {
     isCommit,
     isBranch,
     isComparePage,
+    isDashBoardOverview,
 } from './page-detect'
 
 import addStyleToPage from './add-style'
+
+function getIsNewExperience() {
+    // $FlowIgnore There's always going to be a body
+    const isNewExperience = document.body.dataset.auiVersion >= '7.9.9'
+    return isNewExperience
+}
 
 new OptionsSync().getAll().then(options => {
     const config = {
@@ -51,19 +66,27 @@ new OptionsSync().getAll().then(options => {
     }
 
     init(config)
+
+    if (getIsNewExperience()) {
+        // $FlowIgnore
+        chrome.runtime.onMessage.addListener(request => {
+            if (request.message === 'onHistoryStateUpdated') {
+                if (isPullRequest()) {
+                    codeReviewFeatures(config)
+                    pullrequestRelatedFeatures(config)
+                }
+            }
+        })
+    }
 })
 
 function init(config) {
-    if (config.autolinker) {
-        require('./vendor/prism-autolinker.min')
-    }
-
     if (isBranch()) {
         codeReviewFeatures(config)
     } else if (isPullRequest()) {
         codeReviewFeatures(config)
         pullrequestRelatedFeatures(config)
-    } else if (isPullRequestList()) {
+    } else if (isPullRequestList() || isDashBoardOverview()) {
         pullrequestListRelatedFeatures(config)
     } else if (isCreatePullRequestURL()) {
         if (config.prTemplateEnabled) {
@@ -104,25 +127,30 @@ function pullrequestListRelatedFeatures(config) {
         return
     }
 
-    const prTable = document.querySelector('.pull-requests-table')
-
     // eslint-disable-next-line no-new
-    new SelectorObserver(prTable, 'tr.pull-request-row', function() {
-        if (config.ignoreWhitespace) {
-            ignoreWhitespace(this)
-        }
+    new SelectorObserver(
+        document.body,
+        'tr[data-qa="pull-request-row"]',
+        function() {
+            if (config.ignoreWhitespace) {
+                ignoreWhitespaceSearchParam(this)
+            }
 
-        if (config.augmentPrEntry) {
-            linkifyTargetBranch(this)
-            augmentPrEntry(this)
+            if (config.augmentPrEntry) {
+                augmentPrEntry(this)
+            }
         }
-    })
+    )
 }
 
 function codeReviewFeatures(config) {
     autocollapse.init(config.autocollapsePaths, config.autocollapseDeletedFiles)
 
     diffIgnore.init(config.ignorePaths)
+
+    if (config.autolinker) {
+        require('./vendor/prism-autolinker.min')
+    }
 
     const manipulateSummary = summaryNode => {
         if (config.ignorePaths.length !== 0) {
@@ -131,6 +159,12 @@ function codeReviewFeatures(config) {
 
         if (config.loadAllDiffs) {
             loadAllDiffs.init(summaryNode)
+        }
+    }
+
+    const manipulateGeneralComments = comments => {
+        if (config.showCommentsCheckbox) {
+            insertShowComments(comments, true)
         }
     }
 
@@ -150,7 +184,7 @@ function codeReviewFeatures(config) {
         autocollapse.collapseIfNeeded(diff)
 
         if (config.showCommentsCheckbox) {
-            insertShowComments(diff)
+            insertShowComments(diff, false)
         }
 
         if (config.copyFilename) {
@@ -170,35 +204,91 @@ function codeReviewFeatures(config) {
         }
     }
 
-    const summarySelectors =
-        '#compare-diff-content, #pr-tab-content, #commit, #diff'
+    const summarySelectors = [
+        '#compare-diff-content',
+        '#pr-tab-content',
+        '#commit',
+        '#diff',
+    ]
     const diffSelector = 'section.bb-udiff'
+    const generalCommentsSelector = '#general-comments'
+    const allSelectors = [
+        ...new Set([
+            ...summarySelectors,
+            diffSelector,
+            generalCommentsSelector,
+        ]),
+    ].join(', ')
 
     // Have to observe the DOM because some sections
     // load asynchronously by user interactions
     // eslint-disable-next-line no-new
-    new SelectorObserver(
-        document.body,
-        [summarySelectors, diffSelector].join(', '),
-        function() {
-            try {
-                if (this.matches(summarySelectors)) {
-                    return manipulateSummary(this)
-                }
-
-                if (this.matches(diffSelector)) {
-                    return manipulateDiff(this)
-                }
-            } catch (error) {
-                // Something went wrong
-                console.error('refined-bitbucket(code-review): ', error)
+    new SelectorObserver(document.body, allSelectors, function() {
+        if (
+            this.style.display === 'none' ||
+            this.getAttribute('aria-hidden') === 'true'
+        )
+            return
+        try {
+            if (this.matches(summarySelectors.join(', '))) {
+                return manipulateSummary(this)
             }
+
+            if (this.matches(diffSelector)) {
+                return manipulateDiff(this)
+            }
+
+            if (this.matches(generalCommentsSelector)) {
+                return manipulateGeneralComments(this)
+            }
+        } catch (error) {
+            // Something went wrong
+            console.error('refined-bitbucket(code-review): ', error)
         }
-    )
+    })
+
+    if (config.lineLengthLimitEnabled) {
+        setLineLengthLimit(config.lineLengthLimit)
+    }
+
+    const isNewExperience = getIsNewExperience()
+    if (!isNewExperience && config.ignoreWhitespace) {
+        ignoreWhitespaceInit()
+    }
+
+    if (config.stickyHeader) {
+        setStickyHeader()
+    }
 }
 
 function pullrequestRelatedFeatures(config) {
-    defaultMergeStrategy.init(config.defaultMergeStrategy)
+    const isNewExperience = getIsNewExperience()
+
+    if (isNewExperience) {
+        pullrequestRelatedFeaturesNew(config)
+    } else {
+        pullrequestRelatedFeaturesOld(config)
+    }
+}
+
+function pullrequestRelatedFeaturesNew(config) {
+    if (config.mergeCommitMessageEnabled) {
+        mergeCommitMessageNew(config.mergeCommitMessageUrl)
+    }
+
+    if (config.collapsePullRequestSideMenus) {
+        collapsePullRequestSideMenus(config.collapsePrSideMenusResolutionSize)
+    }
+
+    if (config.compactFileTree) {
+        setCompactPRFileTree()
+    }
+}
+
+function pullrequestRelatedFeaturesOld(config) {
+    if (config.defaultMergeStrategy !== 'none') {
+        defaultMergeStrategy.init(config.defaultMergeStrategy)
+    }
 
     if (config.keymap) {
         keymap.init()
@@ -214,5 +304,9 @@ function pullrequestRelatedFeatures(config) {
 
     if (config.collapsePullRequestDescription) {
         collapsePullRequestDescription()
+    }
+
+    if (config.collapsePullRequestSideMenus) {
+        collapsePullRequestSideMenus(config.collapsePrSideMenusResolutionSize)
     }
 }

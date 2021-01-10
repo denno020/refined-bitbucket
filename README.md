@@ -13,6 +13,7 @@ We all know BitBucket lacks some features that we have in other platforms like G
 ## Current features
 
 -   Adds syntax highlighting for pull requests and commits. See the full list of enabled languages [here][prismjs-languages], and then [here][language-ext]. [Test them here](http://prismjs.com/test.html). Missing any language? [Let me know](https://github.com/refined-bitbucket/refined-bitbucket/issues) or submit a pull request!
+-   Removes Whitespace from the FileTree Menu in the New PR UI (false by default, enable in extension options)
 -   Double click on a word to highlight all occurrences.
 -   ~~Block pull request merging without a minimum number of approvals (defaults to 2 minimum approvals).~~ Removed. [Implemented natively by Bitbucket with "merge checks"](https://confluence.atlassian.com/bitbucketserver/checks-for-merging-pull-requests-776640039.html)
 -   Key binding feature, which allows for quicker navigation through pull requests.
@@ -27,10 +28,11 @@ We all know BitBucket lacks some features that we have in other platforms like G
 -   Adds 'Create Pull Request' link to the 'Compare branches and tags' page.
 -   Choose a default merge strategy for your pull requests. [Also implemented natively by Bitbucket per project](https://bitbucket.org/site/master/issues/13895/default-merge-strategy#comment-45364593)
 -   Check the "Close anchor branch" checkbox by default when creating or editing pull requests.
--   Add source branch, linkify branch names, add creation date and last person to interact with the pull request (commit, comment or approval) to each pull request row in pull request list.
+-   Add last person to interact with the pull request (commit, comment or approval) to each pull request row in pull request list.
 -   Don't carry pluses and minuses to clipboard when copying diff's contents.
 -   Badge with the number of commits of the current pull request next to the "Commits" tab.
 -   Set custom tab indentation size of code (Bitbucket defaults to 8 spaces) when viewing commits/pull requests.
+-   Show a line length limit ruler, defaults to show in the 80th column
 -   Insert "Comments" checkbox in diff header to toggle comments.
 -   Insert "Copy filename to clipboard" button in diff header.
 -   Define your own custom CSS styles to be applied to Bitbucket.
@@ -58,7 +60,11 @@ We all know BitBucket lacks some features that we have in other platforms like G
 -   Similar to how the pull request template feature works,
     it is now possible to configure the extension to replace the default merge commit message for
     pull requests with a template that has access to dynamically injected variables like the pull
-    request title, description, source and destination branch, and more. [Click here for a more in-depth explanation](https://github.com/refined-bitbucket/refined-bitbucket/pull/243)
+    request title, description, source and destination branch, and more.
+    [Click here for a more in-depth explanation](https://github.com/refined-bitbucket/refined-bitbucket/pull/243)
+
+-   Sticky Header for diffs. While scrolling down viewing a large diff, the header of that diff,
+    including the filename and actions, will remain visible.
 
 ## Some images
 
@@ -150,6 +156,38 @@ We all know BitBucket lacks some features that we have in other platforms like G
 		<td>
 			<img src="https://user-images.githubusercontent.com/7514993/35742830-1c604af8-0812-11e8-936b-f6083599fb45.png" alt="collapsed" /> <br />
 			Collapsed
+		</td>
+	</tr>
+</table>
+
+<table>
+	<tr>
+		<th width="50%">
+			Sticky Header
+		</th>
+        <th width="50%">
+            Line length limit ruler
+        </th>
+	</tr>
+	<tr>
+		<td>
+			<img src="https://user-images.githubusercontent.com/2059313/57961790-64fa9880-7950-11e9-9cf4-0f73104eb800.gif" alt="Sticky Header"/>
+		</td>
+        <td>
+            <img src="https://user-images.githubusercontent.com/12451101/71311094-cfaf0d80-2424-11ea-8bec-b1fdfded6c1e.png" alt="Line length limit ruler"/>
+        </td>
+	</tr>
+</table>
+
+<table>
+	<tr>
+		<th>
+			Compact PR File Trees
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<img src="https://user-images.githubusercontent.com/1762464/95523316-4dd0a680-099c-11eb-82f1-1aa8ceba90f6.png" alt="compactTree">
 		</td>
 	</tr>
 </table>

@@ -3,59 +3,87 @@
 
 import { h } from 'dom-chef'
 import SelectorObserver from 'selector-observer'
+
 import api from '../api'
 
 import './sidebar-counters.css'
 
-export const addBadge = (
-    a: HTMLAnchorElement,
-    resources: {| size: number |} | void
-) => {
-    const div: HTMLElement = (a.parentNode: any)
-    div.style.position = 'relative'
+type MenuCounter = $Exact<{
+    branches: number,
+    'pull-requests': number,
+}>
 
-    const size =
-        // eslint-disable-next-line eqeqeq, no-eq-null
-        resources == null || resources.size == null ? '?' : resources.size
+const menus = ['branches', 'pull-requests']
 
-    const badge = (
-        <span class="__rbb-badge">
-            <span class="__rbb-badge-counter">{size}</span>
+const MAX_COUNTER = 99
+
+export function getBadge(size: number): HTMLElement {
+    const maxReached = size > MAX_COUNTER
+    const isNumber = typeof size === 'number'
+
+    return (
+        <span class="__rbb-badge" title={isNumber ? size : ''}>
+            <span
+                class={
+                    maxReached
+                        ? '__rbb-badge-counter -max'
+                        : '__rbb-badge-counter'
+                }
+            >
+                {isNumber ? Math.min(size, MAX_COUNTER) : '!'}
+            </span>
         </span>
     )
-    a.insertBefore(badge, a.firstChild)
-    return badge
+}
+
+export function addCounterToMenuItem(
+    menu: HTMLElement,
+    menusCounters: MenuCounter
+): void {
+    const link: HTMLAnchorElement = (menu.querySelector('a'): any)
+
+    if (!link) return
+
+    const hrefParts = (link.getAttribute('href') || '').split('/')
+    const wantedMenuFromHref = hrefParts.find(x => menus.includes(x))
+
+    // Exit early if can't find one of the nav links
+    // that we are going to augment with badge counters
+    if (!wantedMenuFromHref) return
+
+    const size = menusCounters[wantedMenuFromHref]
+    const badge = getBadge(size)
+
+    menu.style.overflow = 'hidden'
+    link.style.position = 'relative'
+    link.insertBefore(badge, link.firstChild)
 }
 
 export default async function addSideBarCounters() {
-    // Exit early if can't find any of the nav links
-    // that we are going to augment with badge counters
-    const navLinksSelector = 'a[href$="branches/"], a[href$="pull-requests/"]'
-    const navLinks = document.querySelector(navLinksSelector)
-    if (!navLinks) {
-        return
-    }
-
-    // Keep going
     const [branches, pullrequests] = await Promise.all([
         api.getBranches(),
         api.getPullrequests(),
     ])
 
-    const navigation: HTMLElement = (document.getElementById(
-        'adg3-navigation'
-    ): any)
+    const branchesCount = (branches || {}).size
+    const pullRequestsCount = (pullrequests || {}).size
 
-    let branchesBadge = { remove: () => {} }
-    let prBadge = { remove: () => {} }
+    const menusCounters: MenuCounter = {
+        branches: branchesCount,
+        'pull-requests': pullRequestsCount,
+    }
+
+    const contentNavigationSelector =
+        'div[data-testid="Content"] div[role="presentation"]'
+    const contextualNavigationSelector =
+        'div[data-testid="ContextualNavigation"] div[role="presentation"]'
+
     // eslint-disable-next-line no-new
-    new SelectorObserver(navigation, navLinksSelector, function() {
-        if (this.href.endsWith('branches/')) {
-            branchesBadge.remove()
-            branchesBadge = addBadge(this, branches)
-        } else if (this.href.endsWith('pull-requests/')) {
-            prBadge.remove()
-            prBadge = addBadge(this, pullrequests)
+    new SelectorObserver(
+        document.body,
+        [contentNavigationSelector, contextualNavigationSelector].join(', '),
+        function() {
+            addCounterToMenuItem(this, menusCounters)
         }
-    })
+    )
 }
