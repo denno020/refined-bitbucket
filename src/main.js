@@ -34,6 +34,7 @@ import mergeCommitMessage from './merge-commit-message'
 import mergeCommitMessageNew from './merge-commit-message-new'
 import collapsePullRequestDescription from './collapse-pull-request-description'
 import setStickyHeader from './sticky-header'
+import setStickySidebarHeaders from './sticky-sidebar-headers'
 import setLineLengthLimit from './limit-line-length'
 import setCompactPRFileTree from './compact-pull-request-file-tree'
 import collapsePullRequestSideMenus from './collapse-pull-request-side-menus'
@@ -258,6 +259,10 @@ function codeReviewFeatures(config) {
 
     if (config.stickyHeader) {
         setStickyHeader()
+    }
+
+    if (config.stickySidebardHeaders) {
+        setStickySidebarHeaders()
     }
 }
 

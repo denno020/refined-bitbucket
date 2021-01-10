@@ -52,6 +52,7 @@ new OptionsSync().define({
         customStyles: '',
         enableUpdateNotifications: true,
         stickyHeader: true,
+        stickySidebardHeaders: true,
     },
     migrations: [
         async savedOptions => {
